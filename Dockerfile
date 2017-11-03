@@ -1,7 +1,14 @@
-FROM jenkins:1.642.4
+FROM jenkins:2.60.3-alpine
 
 USER root
-RUN apt update \
-      && apt install sudo
-RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+RUN apk update \
+      && apk add sudo \
+      && echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN xargs /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+
+ENV JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+ADD --chown=jenkins:jenkins ./jobs /var/jenkins_home/jobs
+
 USER  jenkins
