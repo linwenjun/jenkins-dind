@@ -4,7 +4,7 @@ set +e
 
 execScriptInDocker() {
   curl -H Content-Type:application/json -X PUT -d "{\"buildNumber\":${BUILD_NUMBER}}" $callback_url
-  unzip answer.zip -d __answerBranch
+  unzip -o answer.zip __answerBranch
   SCRIPT="evaluate-script-${BUILD_NUMBER}.sh"
   IMAGE="$image"
   echo -e $script > $SCRIPT
@@ -37,7 +37,7 @@ failedFunc() {
 }
 
 finalFunc() {
-  
+  sudo docker rm --force ${stack}_${BUILD_NUMBER}
 }
  
 execScriptInDocker
@@ -49,4 +49,5 @@ else
     failedFunc
 fi
 
-echo "FINAL"
+finalFunc
+echo "DONE..."
