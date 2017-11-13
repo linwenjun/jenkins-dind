@@ -1,5 +1,2 @@
-git:3.6.3
+git:3.6.4
 envinject:2.1.5
-flexible-publish:0.15.2
-global-post-script:1.1.3
-run-condition:1.0
