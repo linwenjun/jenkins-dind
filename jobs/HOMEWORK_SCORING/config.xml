@@ -43,7 +43,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.5">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.3">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -56,9 +56,6 @@
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <browser class="hudson.plugins.git.browser.AssemblaWeb">
-      <url></url>
-    </browser>
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
@@ -78,9 +75,9 @@ IMAGE=&quot;$image&quot;
 
 echo $script &gt; $SCRIPT    # save script content to file
 
-sudo docker run --tty --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
+sudo docker run --tty --name $CONTAINER --detach $IMAGE /bin/sh -xc &quot;tail -f /dev/null&quot;         # just to hold container running
 sudo docker cp . $CONTAINER:/var/test-directory # copy directory
-sudo docker exec -i $CONTAINER bash -c &quot;cd /var/test-directory &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_${BUILD_NUMBER} 2&gt;&amp;1  # evaluate in container
+sudo docker exec -i $CONTAINER sh -c &quot;cd /var/test-directory &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_${BUILD_NUMBER} 2&gt;&amp;1  # evaluate in container
 
 </command>
     </hudson.tasks.Shell>
@@ -107,12 +104,19 @@ sudo docker exec -i $CONTAINER bash -c &quot;cd /var/test-directory &amp;&amp; c
             <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
               <buildSteps>
                 <hudson.tasks.Shell>
-                  <command>echo &apos;&apos; &gt; result
-cat /tmp/result_detail_$BUILD_NUMBER &gt; result 
-version=${GIT_COMMIT}
-curl -X PUT -F &quot;status=4&quot; \
--F &quot;version=$version&quot; \
--F &quot;result=@result&quot; $callback_url</command>
+                  <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callback_url
+unzip answer.zip -d __answerBranch
+
+SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
+IMAGE=&quot;$image&quot;
+
+echo $script &gt; $SCRIPT    # save script content to file
+
+sudo docker run --tty --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
+sudo docker cp . $CONTAINER:/var/test-directory # copy directory
+sudo docker exec -i $CONTAINER bash -c &quot;cd /var/test-directory &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_${BUILD_NUMBER} 2&gt;&amp;1  # evaluate in container
+
+</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
@@ -187,11 +191,14 @@ rm -rf workspace</command>
     </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.93.1">
+    <EnvInjectBuildWrapper plugin="envinject@2.1.5">
       <info>
         <propertiesContent>PATH=/usr/local/bin/:$PATH
-CONTAINER=${stack}_${BUILD_NUMBER}
-</propertiesContent>
+CONTAINER=${stack}_${BUILD_NUMBER}</propertiesContent>
+        <secureGroovyScript plugin="script-security@1.35">
+          <script></script>
+          <sandbox>false</sandbox>
+        </secureGroovyScript>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>
