@@ -38,10 +38,11 @@ failedFunc() {
 
 finalFunc() {
   sudo docker rm --force ${stack}_${BUILD_NUMBER}
+  rm -fr __answerBranch
 }
  
 execScriptInDocker
-#  > /dev/null 2>&1
+
 result=$?
 if [ $result -eq 0 ]; then
     successFunc
@@ -49,5 +50,5 @@ else
     failedFunc
 fi
 
-finalFunc
+exit $result
 echo "DONE..."
