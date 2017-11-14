@@ -51,4 +51,3 @@ else
 fi
 
 exit $result
-echo "DONE..."
