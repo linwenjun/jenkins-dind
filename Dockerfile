@@ -1,5 +1,6 @@
-USER root
+FROM jenkins:2.60.1
 
+USER root
 RUN apt-get -qq update \
       && apt-get -qq -y install \
       sudo \
@@ -9,3 +10,4 @@ RUN apt-get -qq update \
 RUN usermod -a -G staff,docker jenkins
 
 USER  jenkins
+
