@@ -1,2 +1,6 @@
 git:3.7.0
-workflow-aggregator:2.4.0
+workflow-aggregator:2.4
+github-branch-source:2.3.2
+pipeline-github-lib:1.0
+pipeline-stage-view:2.9
+credentials-binding:1.13
