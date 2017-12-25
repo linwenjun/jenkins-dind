@@ -9,6 +9,9 @@ RUN apt-get update \
       libltdl7 \
       && echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
+ADD install-rancher-compose.sh install-rancher-compose.sh
+RUN bash install-rancher-compose.sh && rm install-rancher-compose.sh
+
 USER  jenkins
 
 
