@@ -1,2 +1,2 @@
 git:3.6.4
-envinject:2.1.5
+build-pipeline-plugin:1.5.8
