@@ -1,2 +1,2 @@
-git:3.6.4
-build-pipeline-plugin:1.5.8
+git:3.7.0
+workflow-aggregator:2.5
