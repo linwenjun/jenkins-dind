@@ -15,6 +15,4 @@ RUN bash install-rancher-compose.sh && rm install-rancher-compose.sh
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN xargs /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 
-ENV JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-
 USER  jenkins
