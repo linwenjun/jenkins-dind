@@ -1,11 +1,15 @@
-FROM jenkins:2.60.1
+FROM jenkins:2.60.3
 
 USER root
-RUN apt-get -qq update \
-      && apt-get -qq -y install \
+
+RUN apt-get update \
+      && apt-get -y install \
       sudo \
       vim \
+      libltdl7 \
       && echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 USER  jenkins
+
+
 
